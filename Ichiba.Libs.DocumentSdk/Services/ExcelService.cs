@@ -1,4 +1,5 @@
 ﻿using Ichiba.Libs.DocumentSdk.Abstractions;
+using Ichiba.Libs.DocumentSdk.Constants;
 using Ichiba.Libs.DocumentSdk.Interface;
 using Ichiba.Libs.DocumentSdk.Models;
 
@@ -26,39 +27,56 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
     public async Task<DocumentResponse> ExportAsync(ExportTemplateRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var templateStream = await GetTemplateFileStreamAsync(request.ReportCode, request.WorkspaceId, cancellationToken);
-
-        byte[] document;
-        using (var outputStream = new MemoryStream())
-        {
-            await templateStream.CopyToAsync(outputStream, cancellationToken);
-            document = outputStream.ToArray();
-        }
         var templateData = await GetTemplateDataAsync(request.ReportCode, request.WorkspaceId, cancellationToken);
+        string date = DateTime.UtcNow.ToString("yyyyMMdd");
+        string fileName = $"{request.ReportCode}_{date}.{templateData.Type}";
+        string fileExtension = templateData.Type;
+        var exportCommand = new ExportTemplateRequest
+        {
+            ReportCode = request.ReportCode,
+            WorkspaceId = request.WorkspaceId,
+            UserProfileId = request.UserProfileId,
+            FileType = fileExtension,
+            FileExtension = fileExtension,
+            FileName = fileName,
+            Uri = request.Uri,
+            Data = request.Data,
+            Images = request.Images,
+            BarCodes = request.BarCodes,
+            ColumnGroups = request.ColumnGroups
+        };
 
-        var fileName = $"{request.ReportCode}_{DateTime.UtcNow:yyyyMMddHHmmssfff}.{templateData.Type.ToLower()}";
+        var documentResponse = await CallExportApiAsync(exportCommand, cancellationToken);
 
-        var uploadResponse = await UploadFileToPublicAsync(new MemoryStream(document), fileName, cancellationToken);
+        if (documentResponse == null || !documentResponse.Success || documentResponse.Data == null)
+        {
+            throw new ApplicationException(ErrorMessageConstants.FailedSingleFile);
+        }
+
+        var uploadResponse = await UploadFileToPublicAsync(new MemoryStream(documentResponse.Data), documentResponse.FileName, cancellationToken);
         string uri = uploadResponse?.Uri;
 
-        var response = new DocumentResponse
+        if (string.IsNullOrEmpty(uri))
         {
-            Success = uploadResponse != null,
-            FileName = fileName,
-            FileExtension = Path.GetExtension(fileName),
-            Data = document
-        };
+            throw new ApplicationException(ErrorMessageConstants.FailUploadFile);
+        }
 
         await CreateHistoryAsync(new ReportHistory
         {
             UserProfileId = request.UserProfileId,
             ReportCode = request.ReportCode,
-            Link = uri
+            WorkspaceId = request.WorkspaceId,
+            Link = uri 
         }, cancellationToken);
 
-        return response;
+        return new DocumentResponse
+        {
+            Success = true,
+            FileName = documentResponse.FileName,
+            FileExtension = documentResponse.FileExtension,
+            Data = documentResponse.Data
+        };
     }
-
     public async Task<DocumentResponse> WriteAsync(Stream file, ExportSingleRequest request, CancellationToken cancellationToken = default)
     {
         var document = await WriteFileAsync(request, cancellationToken);

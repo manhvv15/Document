@@ -6,4 +6,5 @@ public interface IFileService
 {
     Task<DocumentResponse> WriteAsync(ExportSingleRequest request);
     Task<DocumentResponse> WriteAsync(ExportMultipleRequest request);
+    Task<DocumentResponse> ExportReportAsync(ExportTemplateRequest request);
 }

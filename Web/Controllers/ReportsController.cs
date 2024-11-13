@@ -5,11 +5,11 @@ using Web.Models;
 
 namespace Web.Controllers;
 
-[Route("api/templates")]
-public class TemplatesController : ControllerBase
+[Route("api/reports")]  
+public class ReportsController : ControllerBase
 {
     private readonly IExcelService<ConcreteDocumentItem> _excelService;
-    public TemplatesController(IExcelService<ConcreteDocumentItem> excelService)
+    public ReportsController(IExcelService<ConcreteDocumentItem> excelService)
     {
         _excelService = excelService;
     }

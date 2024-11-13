@@ -1,6 +1,7 @@
 ﻿using Ichiba.Libs.DocumentSdk.Abstractions;
 using Ichiba.Libs.DocumentSdk.Connectors;
 using Ichiba.Libs.DocumentSdk.Constants;
+using Ichiba.Libs.DocumentSdk.Interface;
 using Ichiba.Libs.DocumentSdk.Models;
 using Ichiba.Libs.DocumentSdk.Services;
 using Microsoft.Extensions.Configuration;

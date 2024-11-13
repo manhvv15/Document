@@ -11,6 +11,11 @@ namespace Web.Models
             throw new NotImplementedException();
         }
 
+        public Task<DocumentResponse> ExportReport([Body] ExportTemplateRequest body, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<DocumentResponse> Exports([Body] ExportMultipleRequest body, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();

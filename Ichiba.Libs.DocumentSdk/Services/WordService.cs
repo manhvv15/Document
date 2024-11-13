@@ -6,6 +6,11 @@ namespace Ichiba.Libs.DocumentSdk.Services;
 
 public class WordService(IDocumentConnector documentConnector) : IWordService
 {
+    public Task<DocumentResponse> ExportReportAsync(ExportTemplateRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<DocumentResponse> WriteAsync(ExportSingleRequest request)
     {
         return await documentConnector.Export(request);

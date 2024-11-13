@@ -18,6 +18,10 @@ public interface IDocumentConnector
     /// <param name="body"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
+    [Post(Endpoints.ExportReport)]
+    public Task<DocumentResponse> ExportReport([Body] ExportTemplateRequest body,
+       CancellationToken cancellationToken = default);
+
     [Post(Endpoints.ExportSingleFile)]
     public Task<DocumentResponse> Export([Body] ExportSingleRequest body,
         CancellationToken cancellationToken = default);

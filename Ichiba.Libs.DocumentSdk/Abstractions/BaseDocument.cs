@@ -15,62 +15,68 @@ public abstract class BaseDocument<T> : IDisposable where T : DocumentItemBase, 
     private readonly ITemplateDocumentService _templateService;
     protected readonly IEnumerable<IDocumentValidator<T>> validators;
     private readonly IFileUploadService _fileUploadService;
-
-    private readonly Func<string, Guid, CancellationToken, Task<TemplateData>> _getTemplateDataDelegate;
-    private readonly Func<string, Guid, CancellationToken, Task<HttpResponseMessage>> _getTemplateFileDelegate;
-
     protected BaseDocument(
         IHttpClientFactory httpClientFactory,
         ITemplateDocumentService templateService,
         IFileUploadService fileUploadService,
-        IEnumerable<IDocumentValidator<T>> Validators)
+        IEnumerable<IDocumentValidator<T>> Validators
+        )
     {
         _client = httpClientFactory.CreateClient();
         _templateService = templateService;
         _fileUploadService = fileUploadService;
         validators = Validators;
-
-        _getTemplateDataDelegate = _templateService.GetTemplateDataAsync;
-        _getTemplateFileDelegate = async (reportCode, workspaceId, cancellationToken) =>
-        {
-            return await _templateService.GetTemplateFileAsync(reportCode, workspaceId, cancellationToken);
-        };
     }
     public async Task<TemplateData> GetTemplateDataAsync(
-     string reportCode,
-     Guid workspaceId,
-     CancellationToken cancellationToken)
+            string reportCode,
+            Guid workspaceId,
+            CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var templateData = await _getTemplateDataDelegate(reportCode, workspaceId, cancellationToken);
+        var templateData = await _templateService.GetTemplateDataAsync(reportCode, workspaceId, cancellationToken);
         if (templateData == null)
         {
-            throw new ApplicationException("Template data not found");
+            throw new ApplicationException(ErrorMessageConstants.TemplateNotFound);
         }
 
         return templateData;
     }
 
     public async Task<Stream> GetTemplateFileStreamAsync(
-    string reportCode,
-    Guid workspaceId,
-    CancellationToken cancellationToken)
+        string reportCode,
+        Guid workspaceId,
+        CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var fileResponse = await _getTemplateFileDelegate(reportCode, workspaceId, cancellationToken);
+        var fileResponse = await _templateService.GetTemplateFileAsync(reportCode, workspaceId, cancellationToken);
         fileResponse.EnsureSuccessStatusCode();
 
         var fileData = await fileResponse.Content.ReadAsByteArrayAsync(cancellationToken);
         if (fileData == null || fileData.Length == 0)
         {
-            throw new ApplicationException("File not found");
+            throw new ApplicationException(ErrorMessageConstants.FindNotFound);
         }
 
         return new MemoryStream(fileData);
     }
-
+    public async Task<DocumentResponse> CallExportApiAsync(ExportTemplateRequest exportCommand, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _templateService.ExportDocumentAsync(exportCommand, cancellationToken);
+            if (response == null || !response.Success)
+            {
+                throw new ApplicationException(ErrorMessageConstants.FailedSingleFile);
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message);
+        }
+    }
 
     protected async Task<ImportExcelResponse<T>> ReadFileAsync(Stream stream, ImportExcelRequest request, CancellationToken cancellationToken = default)
     {
@@ -123,6 +129,7 @@ public abstract class BaseDocument<T> : IDisposable where T : DocumentItemBase, 
         await _templateService.CreateHistoryAsync(historyRequest, cancellationToken);
     }
 
+
     protected async Task<Byte[]>? WriteFileErrorAsync(Stream stream, ExportSingleRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -146,7 +153,7 @@ public abstract class BaseDocument<T> : IDisposable where T : DocumentItemBase, 
         var result = await AsposeHelper.AddProtectedSheetAsync(file, CommonConstants.NameSheetKey, CommonConstants.PasswordSheetKey, CommonConstants.KeyProtected, CommonConstants.CellContainKey, cancellationToken);
         return result;
     }
-    private async Task<Stream> GetFileTemplateAsync(string uri, CancellationToken cancellationToken = default)
+    public async Task<Stream> GetFileTemplateAsync(string uri, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -156,7 +163,7 @@ public abstract class BaseDocument<T> : IDisposable where T : DocumentItemBase, 
             return new MemoryStream(templateFileData);
         }
 
-        throw new ApplicationException("File not found");
+        throw new ApplicationException(ErrorMessageConstants.FindNotFound);
     }
 
     #region mini excel

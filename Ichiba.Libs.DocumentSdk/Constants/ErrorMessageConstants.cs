@@ -21,8 +21,13 @@ public static class ErrorMessageConstants
     public const string InvalidTypeDateTime = "Value must be date time.";
     public const string InvalidTypeDate = "Value must be date.";
     public const string InvalidTypeString = "Value must be string.";
+    public const string InvalidTypeFile = "Failed to upload document to storage.";
+    public const string FailedSingleFile = "Failed to export single file.";
+    public const string FailUploadFile = "Fail to upload file";
     public const string DuplicateValueFound = "Duplicate value found: {0}";
     public const string NotValidKeySheet = "TEMPLATE_NOT_VALID";
     public const string RequestNotValid = "REQUEST_NOT_VALID";
     public const string WorksheetNotFound = "WORKSHEET_NOT_FOUND";
+    public const string FindNotFound = "FIND_NOT_FOUND";
+    public const string TemplateNotFound = "TEMPLADEDATA_NOT_FOUND";
 }

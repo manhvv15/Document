@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "13rXttf1Cx7w0aW1spJZ6slwIHLPXPLtk705W/uU3PSKBHHMI8ViiJhzlk3+ZjxZu/+MDtgA7lfGjjCKcL9AIA==",
+  "dgSpecHash": "Fa1UWk/9ky3jYs4wDOyIFBnlHR6t9qn9URZ9i8A34cRdv04W134c/VLjEqfaChv1jqxfOKZHSC7OB4IOAIHUHw==",
   "success": true,
   "projectFilePath": "C:\\Users\\hp\\Downloads\\Ichiba.Libs.DocumentSdk\\Web\\Web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\hp\\.nuget\\packages\\aspose.cells\\21.1.0\\aspose.cells.21.1.0.nupkg.sha512",
+    "C:\\Users\\hp\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
+    "C:\\Users\\hp\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.2.0\\microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
     "C:\\Users\\hp\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\hp\\.nuget\\packages\\microsoft.extensions.configuration\\8.0.0\\microsoft.extensions.configuration.8.0.0.nupkg.sha512",
     "C:\\Users\\hp\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\8.0.0\\microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",

@@ -6,6 +6,11 @@ namespace Ichiba.Libs.DocumentSdk.Services;
 
 public class PdfService(IDocumentConnector documentConnector) : IPdfService
 {
+    public async Task<DocumentResponse> ExportReportAsync(ExportTemplateRequest request)
+    {
+        return await documentConnector.ExportReport(request);
+    }
+
     public async Task<DocumentResponse> WriteAsync(ExportSingleRequest request)
     {
         return await documentConnector.Export(request);

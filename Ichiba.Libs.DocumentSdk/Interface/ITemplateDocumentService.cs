@@ -22,4 +22,6 @@ public interface ITemplateDocumentService
     Task<FileUploadResponse> UploadFileToPublicAsync(
            [Body] MultipartFormDataContent content,
            CancellationToken cancellationToken);
+    [Post("api/export/singlefile")]
+    Task<DocumentResponse> ExportDocumentAsync([Body] ExportTemplateRequest exportCommand, CancellationToken cancellationToken);
 }
