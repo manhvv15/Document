@@ -14,7 +14,7 @@ public class ReportsController : ControllerBase
         _excelService = excelService;
     }
     [HttpPost]
-    public async Task<IActionResult> WriteDocument([FromBody] ExportTemplateRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> WriteDocument([FromBody] ExportTemplateRequestDto request, CancellationToken cancellationToken)
     {
         try
         {

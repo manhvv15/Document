@@ -9,7 +9,7 @@ public interface IExcelService<T> where T : DocumentItemBase, new()
     Task<ImportExcelResponse<T>> ReadAsync(Stream file, ImportExcelRequest request, CancellationToken cancellationToken = default);
 
     Task<DocumentResponse> WriteAsync(ExportSingleRequest request, CancellationToken cancellationToken = default);
-    Task<DocumentResponse> ExportAsync(ExportTemplateRequest request, CancellationToken cancellationToken = default);
+    Task<DocumentResponse> ExportAsync(ExportTemplateRequestDto request, CancellationToken cancellationToken = default);
 
     Task<DocumentResponse> WriteAsync(Stream file, ExportSingleRequest request, CancellationToken cancellationToken = default);
     Task<DocumentResponse> WriteErrorAsync(Stream file, ExportSingleRequest request, CancellationToken cancellationToken = default);

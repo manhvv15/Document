@@ -21,12 +21,12 @@ public static class ConfigureServices
 
         services.AddRestEaseClient<IFileUploadService>(restEaseClientConfig.FileUploadServiceUrl)
             .AddHttpMessageHandler<ForwardWorkContextHttpMessageDelegateHandler>();
-        services.AddScoped<IDocumentConnector, DocumentConnector>();
+        services.AddTransient<IDocumentConnector, DocumentConnector>();
 
-        services.AddScoped<IDocumentServiceFactory, DocumentServiceFactory>();
-        services.AddScoped<IWordService, WordService>();
-        services.AddScoped<IPdfService, PdfService>();
-        services.AddScoped<IExcelService<ConcreteDocumentItem>, ExcelService<ConcreteDocumentItem>>();
+        services.AddTransient<IDocumentServiceFactory, DocumentServiceFactory>();
+        services.AddTransient<IWordService, WordService>();
+        services.AddTransient<IPdfService, PdfService>();
+        services.AddTransient<IExcelService<ConcreteDocumentItem>, ExcelService<ConcreteDocumentItem>>();
         services.AddTransient<ForwardWorkContextHttpMessageDelegateHandler>();
 
         return services;
