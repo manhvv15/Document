@@ -27,45 +27,12 @@ public abstract class BaseDocument<T> : IDisposable where T : DocumentItemBase, 
         _fileUploadService = fileUploadService;
         validators = Validators;
     }
-    public async Task<TemplateData> GetTemplateDataAsync(
-            string reportCode,
-            Guid workspaceId,
-            CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var templateData = await _templateService.GetTemplateDataAsync(reportCode, workspaceId, cancellationToken);
-        if (templateData == null)
-        {
-            throw new ApplicationException(ErrorMessageConstants.TemplateNotFound);
-        }
-
-        return templateData;
-    }
-
-    public async Task<Stream> GetTemplateFileStreamAsync(
-        string reportCode,
-        Guid workspaceId,
-        CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var fileResponse = await _templateService.GetTemplateFileAsync(reportCode, workspaceId, cancellationToken);
-        fileResponse.EnsureSuccessStatusCode();
-
-        var fileData = await fileResponse.Content.ReadAsByteArrayAsync(cancellationToken);
-        if (fileData == null || fileData.Length == 0)
-        {
-            throw new ApplicationException(ErrorMessageConstants.FindNotFound);
-        }
-
-        return new MemoryStream(fileData);
-    }
-    public async Task<DocumentResponse> CallExportApiAsync(ExportTemplateRequest exportCommand, CancellationToken cancellationToken)
+    
+    public async Task<DocumentResponse> ExportTemplateAsync(ExportTemplateRequestDto exportCommand, CancellationToken cancellationToken)
     {
         try
         {
-            var response = await _templateService.ExportDocumentAsync(exportCommand, cancellationToken);
+            var response = await _templateService.ExportTemplateAsync(exportCommand, cancellationToken);
             if (response == null || !response.Success)
             {
                 throw new ApplicationException(ErrorMessageConstants.FailedSingleFile);

@@ -27,26 +27,8 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
     public async Task<DocumentResponse> ExportAsync(ExportTemplateRequestDto request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var templateData = await GetTemplateDataAsync(request.ReportCode, request.WorkspaceId, cancellationToken);
-        var date = DateTime.UtcNow.ToString("yyyyMMdd");
-        var fileName = $"{request.ReportCode}_{date}.{templateData.Type}";
-        var fileExtension = templateData.Type;
-        var exportCommand = new ExportTemplateRequest
-        {
-            ReportCode = request.ReportCode,
-            WorkspaceId = request.WorkspaceId,
-            UserProfileId = request.UserProfileId,
-            FileType = fileExtension,
-            FileExtension = fileExtension,
-            FileName = fileName,
-            Uri = templateData.Link,
-            Data = request.Data,
-            Images = request.Images,
-            BarCodes = request.BarCodes,
-            ColumnGroups = request.ColumnGroups
-        };
 
-        var documentResponse = await CallExportApiAsync(exportCommand, cancellationToken);
+        var documentResponse = await ExportTemplateAsync(request, cancellationToken);
 
         if (documentResponse == null || !documentResponse.Success || documentResponse.Data == null)
         {
@@ -66,7 +48,7 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
             UserProfileId = request.UserProfileId,
             ReportCode = request.ReportCode,
             WorkspaceId = request.WorkspaceId,
-            Link = uri 
+            Link = uri
         }, cancellationToken);
 
         return new DocumentResponse
