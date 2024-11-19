@@ -34,23 +34,24 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
         {
             throw new ApplicationException(ErrorMessageConstants.FailedSingleFile);
         }
-
-        var uploadResponse = await UploadFileToPublicAsync(new MemoryStream(documentResponse.Data), documentResponse.FileName, cancellationToken);
-        string uri = uploadResponse?.Uri;
-
-        if (string.IsNullOrEmpty(uri))
+        if (request.isCreateHistory)
         {
-            throw new ApplicationException(ErrorMessageConstants.FailUploadFile);
+            var uploadResponse = await UploadFileToPublicAsync(new MemoryStream(documentResponse.Data), documentResponse.FileName, cancellationToken);
+            string uri = uploadResponse?.Uri;
+
+            if (string.IsNullOrEmpty(uri))
+            {
+                throw new ApplicationException(ErrorMessageConstants.FailUploadFile);
+            }
+
+            await CreateHistoryAsync(new ReportHistory
+            {
+                UserProfileId = request.UserProfileId,
+                ReportCode = request.ReportCode,
+                WorkspaceId = request.WorkspaceId,
+                Link = uri
+            }, cancellationToken);
         }
-
-        await CreateHistoryAsync(new ReportHistory
-        {
-            UserProfileId = request.UserProfileId,
-            ReportCode = request.ReportCode,
-            WorkspaceId = request.WorkspaceId,
-            Link = uri
-        }, cancellationToken);
-
         return new DocumentResponse
         {
             Success = true,
