@@ -21,6 +21,8 @@ public static class ConfigureServices
 
         services.AddRestEaseClient<IFileUploadService>(restEaseClientConfig.FileUploadServiceUrl)
             .AddHttpMessageHandler<ForwardWorkContextHttpMessageDelegateHandler>();
+        services.AddRestEaseClient<IReportHistoryService>(restEaseClientConfig.TemplateDocumentServiceUrl)
+            .AddHttpMessageHandler<ForwardWorkContextHttpMessageDelegateHandler>();
         services.AddTransient<IDocumentConnector, DocumentConnector>();
 
         services.AddTransient<IDocumentServiceFactory, DocumentServiceFactory>();

@@ -13,17 +13,20 @@ public abstract class BaseDocument<T> : IDisposable where T : DocumentItemBase, 
 {
     private readonly HttpClient _client;
     private readonly ITemplateDocumentService _templateService;
+    private readonly IReportHistoryService _reportHistoryService;
     protected readonly IEnumerable<IDocumentValidator<T>> validators;
     private readonly IFileUploadService _fileUploadService;
     protected BaseDocument(
         IHttpClientFactory httpClientFactory,
         ITemplateDocumentService templateService,
-        IFileUploadService fileUploadService,
+        IReportHistoryService reportHistoryService,
+    IFileUploadService fileUploadService,
         IEnumerable<IDocumentValidator<T>> Validators
         )
     {
         _client = httpClientFactory.CreateClient();
         _templateService = templateService;
+        _reportHistoryService = reportHistoryService;
         _fileUploadService = fileUploadService;
         validators = Validators;
     }
@@ -44,7 +47,22 @@ public abstract class BaseDocument<T> : IDisposable where T : DocumentItemBase, 
             throw new ApplicationException(ex.Message);
         }
     }
-
+    public async Task<PageResult<ReportHistory>> GetReportHistoryWithPagination(ReportHistoryPagination command, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _reportHistoryService.ReportHistoryWithPagination(command, cancellationToken);
+            if (response == null )
+            {
+                throw new ApplicationException(ErrorMessageConstants.FailReportHistory);
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message);
+        }
+    }
     protected async Task<ImportExcelResponse<T>> ReadFileAsync(Stream stream, ImportExcelRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -89,7 +107,7 @@ public abstract class BaseDocument<T> : IDisposable where T : DocumentItemBase, 
         var templateData = await GetFileTemplateAsync(request.Uri, cancellationToken);
         return await ExportExcelByAspose(request, templateData);
     }
-    public async Task CreateHistoryAsync(ReportHistory historyRequest, CancellationToken cancellationToken)
+    public async Task CreateHistoryAsync(ReportHistoryDto historyRequest, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

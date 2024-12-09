@@ -5,11 +5,11 @@ using Ichiba.Libs.DocumentSdk.Models;
 
 namespace Ichiba.Libs.DocumentSdk.Services;
 
-public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocumentService templateService,IFileUploadService fileUploadService, IEnumerable<IDocumentValidator<T>> validators)
-    : BaseDocument<T>(httpClientFactory, templateService, fileUploadService, validators), IExcelService<T>
+public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocumentService templateService, IReportHistoryService reportHistoryService, IFileUploadService fileUploadService, IEnumerable<IDocumentValidator<T>> validators)
+    : BaseDocument<T>(httpClientFactory, templateService, reportHistoryService, fileUploadService, validators), IExcelService<T>
     where T : DocumentItemBase, new()
 {
-     public async Task<ImportExcelResponse<T>> ReadAsync(string filePath, ImportExcelRequest request, CancellationToken cancellationToken = default) => await ReadFileAsync(filePath, request, cancellationToken);
+    public async Task<ImportExcelResponse<T>> ReadAsync(string filePath, ImportExcelRequest request, CancellationToken cancellationToken = default) => await ReadFileAsync(filePath, request, cancellationToken);
 
     public async Task<ImportExcelResponse<T>> ReadAsync(Stream file, ImportExcelRequest request, CancellationToken cancellationToken = default) => await ReadFileAsync(file, request, cancellationToken);
 
@@ -30,7 +30,7 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
 
         var documentResponse = await ExportTemplateAsync(request, cancellationToken);
 
-        if (documentResponse == null || !documentResponse.Success || documentResponse.Data == null)
+        if (documentResponse == null || !documentResponse.Success)
         {
             throw new ApplicationException(ErrorMessageConstants.FailedSingleFile);
         }
@@ -44,7 +44,7 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
                 throw new ApplicationException(ErrorMessageConstants.FailUploadFile);
             }
 
-            await CreateHistoryAsync(new ReportHistory
+            await CreateHistoryAsync(new ReportHistoryDto
             {
                 UserProfileId = request.UserProfileId,
                 ReportCode = request.ReportCode,
@@ -59,6 +59,12 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
             FileExtension = documentResponse.FileExtension,
             Data = documentResponse.Data
         };
+    }
+    public async Task<PageResult<ReportHistory>> GetReportHistory(ReportHistoryPagination request, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var reportHistory = await GetReportHistoryWithPagination(request, cancellationToken);
+        return reportHistory;
     }
     public async Task<DocumentResponse> WriteAsync(Stream file, ExportSingleRequest request, CancellationToken cancellationToken = default)
     {
@@ -83,4 +89,6 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
             Data = document
         };
     }
+
+
 }

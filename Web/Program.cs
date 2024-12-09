@@ -33,12 +33,18 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseCors(options => options
+    .WithOrigins(new[] { "http://localhost:3000" })
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+);
 
         app.UseAuthorization();
-        
+
         app.MapControllers();
 
         app.Run();
-       
+
     }
 }

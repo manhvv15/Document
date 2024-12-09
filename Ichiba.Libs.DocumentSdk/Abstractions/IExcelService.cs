@@ -10,6 +10,8 @@ public interface IExcelService<T> where T : DocumentItemBase, new()
 
     Task<DocumentResponse> WriteAsync(ExportSingleRequest request, CancellationToken cancellationToken = default);
     Task<DocumentResponse> ExportAsync(ExportTemplateRequestDto request, CancellationToken cancellationToken = default);
+    Task<PageResult<ReportHistory>> GetReportHistory(ReportHistoryPagination request, CancellationToken cancellationToken = default);
+
 
     Task<DocumentResponse> WriteAsync(Stream file, ExportSingleRequest request, CancellationToken cancellationToken = default);
     Task<DocumentResponse> WriteErrorAsync(Stream file, ExportSingleRequest request, CancellationToken cancellationToken = default);

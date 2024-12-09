@@ -1,6 +1,8 @@
 ﻿using Ichiba.Libs.DocumentSdk.Abstractions;
 using Ichiba.Libs.DocumentSdk.Models;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
+using RestEase.Implementation;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -13,6 +15,14 @@ public class ReportsController : ControllerBase
     {
         _excelService = excelService;
     }
+    [HttpGet]
+    public async Task<IActionResult> GetReportHistoryWithPagination([FromQuery] ReportHistoryPagination query, CancellationToken cancellationToken)
+    {
+        var response = await _excelService.GetReportHistory(query, cancellationToken);
+
+        return Ok(response);
+    }
+
     [HttpPost]
     public async Task<IActionResult> WriteDocument([FromBody] ExportTemplateRequestDto request, CancellationToken cancellationToken)
     {
