@@ -34,7 +34,7 @@ public class ExcelService<T>(IHttpClientFactory httpClientFactory, ITemplateDocu
         {
             throw new ApplicationException(ErrorMessageConstants.FailedSingleFile);
         }
-        if (request.isCreateHistory)
+        if (request.IsCreateHistory)
         {
             var uploadResponse = await UploadFileToPublicAsync(new MemoryStream(documentResponse.Data), documentResponse.FileName, cancellationToken);
             string uri = uploadResponse?.Uri;

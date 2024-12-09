@@ -5,7 +5,7 @@ public class ExportTemplateRequestDto
     public string ReportCode { get; set; } = string.Empty;
     public Guid WorkspaceId { get; set; } = Guid.Empty;
     public string UserProfileId { get; set; }
-    public bool isCreateHistory { get; set; }
+    public bool IsCreateHistory { get; set; }
     public Dictionary<string, ImageDetail> Images { get; set; } = new Dictionary<string, ImageDetail>();
     public Dictionary<string, BarCodeDetail> BarCodes { get; set; } = new Dictionary<string, BarCodeDetail>();
     public Dictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
